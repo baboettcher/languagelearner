@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { createProject } from "../../store/actions/projectActions.js";
+import { Redirect } from "react-router-dom";
 
 class CreateProject extends Component {
   state = {
@@ -17,8 +18,12 @@ class CreateProject extends Component {
     //console.log(this.state);
     // pass in the project to create
     this.props.createProject(this.state);
+    this.props.history.push("/"); // how to make this happen after createProject has finished?
   };
   render() {
+    const { auth } = this.props;
+    if (!auth.uid) return <Redirect to="/signin" />;
+
     return (
       <div className="container">
         <form className="white" onSubmit={this.handleSubmit}>
@@ -56,7 +61,13 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
+const mapStateToProps = state => {
+  return {
+    auth: state.firebase.auth
+  };
+};
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(CreateProject);

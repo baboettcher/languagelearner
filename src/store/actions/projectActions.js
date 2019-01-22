@@ -2,14 +2,16 @@ export const createProject = project => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     // async
     const firestore = getFirestore();
+    const profile = getState().firebase.profile;
+    const auth = getState().firebase.auth.uid;
 
     firestore
       .collection("projects")
       .add({
         ...project,
-        authorFirst: "Badass",
-        authorLast: "Beeech",
-        authorId: "01389jd",
+        authorFirst: profile.firstName,
+        authorLast: profile.lastName,
+        authorId: auth,
         createdAt: new Date()
       })
       .then(() => {
@@ -26,3 +28,5 @@ export const createProject = project => {
       });
   };
 };
+
+// set up connect, mapstateToProps, update the first, last annd Id

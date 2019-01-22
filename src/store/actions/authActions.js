@@ -35,3 +35,43 @@ export const signOut = () => {
       });
   };
 };
+
+// newUSer: email, pw, first, last
+export const signUpUser = newUser => {
+  console.log("signup new user called");
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase();
+    const firestore = getFirestore();
+
+    console.log("=====>>>>", firebase);
+    // .add -- autogenerates ID, but we want to use firebase ID from response object
+    // .doc -- creates a new doc with given id
+    // .set -- pass in object of properties
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(newUser.email, newUser.password)
+      .then(response => {
+        console.log("===>>", response.user);
+        return firestore // returns a promise
+          .collection("users")
+          .doc(response.user.uid)
+          .set({
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            initials: newUser.firstName[0] + newUser.lastName[0]
+          });
+        // update state
+      })
+      .then(() => {
+        dispatch({
+          type: "SIGNUP_SUCCESS"
+        });
+      })
+      .catch(err => {
+        dispatch({
+          type: "SIGNUP_ERROR",
+          err
+        });
+      });
+  };
+};

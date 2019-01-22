@@ -18,8 +18,12 @@ const store = createStore(
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
     reduxFirestore(fbConfig),
-    reactReduxFirebase(fbConfig, { attachAuthIsReady: true }) // pass in config as second parameter to allow is to access a "firebaseAuthIsReady"
-  )
+    reactReduxFirebase(fbConfig, {
+      attachAuthIsReady: true,
+      useFirestoreForProfile: true,
+      userProfile: "users"
+    }) // pass in config as second parameter to allow is to access a "firebaseAuthIsReady"
+  ) // firebase reducer to user firestore for profile
 );
 
 // wait to render until firebase is ready
